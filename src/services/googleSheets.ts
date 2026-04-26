@@ -41,44 +41,7 @@ export interface SiteQuery {
   date: string;
 }
 
-const initialProducts: Product[] = [
-  {
-    id: "p1",
-    name: "Premium Pigeon Cage",
-    description: "Spacious and ventilated cage designed specifically for pigeons.",
-    price: 15000,
-    image: "https://images.unsplash.com/photo-1551085254-e96b210db58a?q=80&w=600&auto=format&fit=crop",
-    category: "Bird Cages",
-    stock: 10
-  },
-  {
-    id: "p2",
-    name: "Elite Parrot Aviary",
-    description: "A large, beautiful home for your parrots with multiple perches.",
-    price: 35000,
-    image: "https://images.unsplash.com/photo-1603525143324-42f7c00cb75d?q=80&w=600&auto=format&fit=crop",
-    category: "Bird Cages",
-    stock: 5
-  },
-  {
-    id: "p3",
-    name: "Luxury Cat Condo",
-    description: "Multi-level cat cage with scratching posts and sleeping areas.",
-    price: 12900,
-    image: "https://images.unsplash.com/photo-1548802673-38020fb237a3?q=80&w=600&auto=format&fit=crop",
-    category: "Cat Cages",
-    stock: 12
-  },
-  {
-    id: "p4",
-    name: "Universal Pet Feeder",
-    description: "Automatic feeder suitable for various small pets.",
-    price: 2500,
-    image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?q=80&w=600&auto=format&fit=crop",
-    category: "Accessories",
-    stock: 50
-  }
-];
+const initialProducts: Product[] = [];
 
 const API_URL = (import.meta.env.VITE_GOOGLE_SHEETS_URL || "").trim();
 
@@ -160,14 +123,14 @@ let lastWriteTime = 0;
 
 const getWithSWR = async (sheetName: string, fallback: any[]) => {
   const local = getLocal(sheetName);
-  if (local && local.length > 0) {
+  if (local !== null) {
     if (Date.now() - lastWriteTime > 5000) {
       fetchFromAPI(sheetName, local).catch(console.error); // Trigger background sync
     }
     return local; // Return instantly
   }
   const fetched = await fetchFromAPI(sheetName, fallback);
-  return fetched?.length > 0 ? fetched : fallback;
+  return fetched !== null ? fetched : fallback;
 };
 
 const postToAPI = async (data: any) => {
